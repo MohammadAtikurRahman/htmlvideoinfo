@@ -35,17 +35,17 @@
   <h2>Video Catalogue</h2>
 
   <p>English 9-10</p>
-<button type="button" class="collapsible">Articles</button>
-<div class="content">
-  <p><a href="#" id="videoLink">Omission of A and An</a></p>
-  <video id="myVideo" class="video-js vjs-default-skin" controls preload="auto" width="640" height="264" data-setup="{}">
-    <source src="C:/Users/Meta DEV 02/Desktop/video/Articles_ Omission of A and An _ Article in English Grammar.mp4" type="video/mp4">
-  </video>
-  <a id="downloadLink" style="display:none">Download video information</a>
-</div>
+  <button type="button" class="collapsible">Articles</button>
+  <div class="content">
+    <p><a href="#" id="videoLink">Omission of A and An</a></p>
+    <video id="myVideo" class="video-js vjs-default-skin" controls preload="auto" width="640" height="264" data-setup="{}">
+      <source src="C:/Users/Meta DEV 02/Desktop/video/Articles_ Omission of A and An _ Article in English Grammar.mp4" type="video/mp4">
+    </video>
+  </div>
 
 <script>
-  var coll = document.getElementsByClassName("collapsible");
+
+var coll = document.getElementsByClassName("collapsible");
   var i;
 
   for (i = 0; i < coll.length; i++) {
@@ -60,19 +60,24 @@
     });
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
   var videoLink = document.getElementById("videoLink");
   var player = videojs('myVideo');
-  var downloadLink = document.getElementById("downloadLink");
   var startTime = 0;
   var startDate = '';
-
-  function createDownloadableFile(content, filename) {
-    var file = new Blob([content], {type: 'text/plain'});
-    var url = URL.createObjectURL(file);
-    downloadLink.href = url;
-    downloadLink.download = filename;
-    downloadLink.style.display = 'block';
-  }
+  var videoData = [];
 
   videoLink.addEventListener('click', function(e) {
     e.preventDefault();
@@ -89,16 +94,38 @@
     var endTime = player.currentTime();
     var duration = endTime - startTime;
 
-    var videoInfo = "Video Player Name: Video.js\n";
-    videoInfo += "Location: C:/Users/Meta DEV 02/Desktop/video/Articles_ Omission of A and An _ Article in English Grammar.mp4\n";
-    videoInfo += "Start Time: " + startTime + "\n";
-    videoInfo += "Start Date and Time: " + startDate.toLocaleString() + "\n";
-    videoInfo += "End Time: " + endTime + "\n";
-    videoInfo += "End Date and Time: " + endDate.toLocaleString() + "\n";
-    videoInfo += "Video Playing Duration: " + duration + "\n";
+    var videoInfo = {
+      "Video Player Name": "Video.js",
+      "Location": "C:/Users/Meta DEV 02/Desktop/video/Articles_ Omission of A and An _ Article in English Grammar.mp4",
+      "Start Time": startTime,
+      "Start Date and Time": startDate.toLocaleString(),
+      "End Time": endTime,
+      "End Date and Time": endDate.toLocaleString(),
+      "Video Playing Duration": duration
+    };
 
-    createDownloadableFile(videoInfo, 'video_information.txt');
+    videoData.push(videoInfo);
+    saveJsonToFile(videoData, 'video_information.json');
   });
+
+  function saveJsonToFile(data, filename) {
+    var jsonString = JSON.stringify(data, null, 2);
+    var file = new Blob([jsonString], {type: 'application/json'});
+    var url = URL.createObjectURL(file);
+
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+
+    setTimeout(function() {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 0);
+  }
+
 </script>
 
 </body>
