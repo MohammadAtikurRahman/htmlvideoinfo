@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Player Information</title>
+  <link href="https://vjs.zencdn.net/7.17.0/video-js.min.css" rel="stylesheet">
+  <script src="https://vjs.zencdn.net/7.17.0/video.min.js"></script>
+   <style>
+    .collapsible {
+      background-color: #777;
+      color: white;
+      cursor: pointer;
+      padding: 18px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .active, .collapsible:hover {
+      background-color: #555;
+    }
+
+    .content {
+      padding: 0 18px;
+      display: none;
+      overflow: hidden;
+      background-color: #f1f1f1;
+    }
+    </style>
+</head>
+<body>
+  <h2>Video Catalogue</h2>
+
+  <p>English 9-10</p>
+  <button type="button" class="collapsible">Articles</button>
+  <div class="content">
+    <p><a href="#" id="videoLink">Omission of A and An</a></p>
+    <video id="myVideo" class="video-js vjs-default-skin" controls preload="auto" width="640" height="264" data-setup="{}">
+      <source src="C:/Users/Meta DEV 02/Desktop/video/Articles_ Omission of A and An _ Article in English Grammar.mp4" type="video/mp4">
+    </video>
+  </div>
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+  var i;
+
+  for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      var content = this.nextElementSibling;
+      if (content.style.display === "block") {
+        content.style.display = "none";
+      } else {
+        content.style.display = "block";
+      }
+    });
+  }
+
+  var videoLink = document.getElementById("videoLink");
+  var player = videojs('myVideo');
+  var startTime = 0;
+  var startDate = '';
+
+  videoLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    player.play();
+  });
+
+  player.on('play', function() {
+    startTime = player.currentTime();
+    startDate = new Date();
+  });
+
+  player.on('pause', function() {
+    var endDate = new Date();
+    var endTime = player.currentTime();
+    var duration = endTime - startTime;
+    var videoElement = document.querySelector('#myVideo source');
+    var videoSrc = videoElement.getAttribute('src');
+    var videoName = videoSrc.split('/').pop();
+
+
+    var videoInfo = {
+      "player_name": videoName,
+      "location": "C:/Users/Meta DEV 02/Desktop/video/Articles_ Omission of A and An _ Article in English Grammar.mp4",
+      "pl_start": startTime,
+      "start_date_time": startDate.toLocaleString(),
+      "pl_end": endTime,
+      "end_date_time": endDate.toLocaleString(),
+      "duration": duration
+    };
+
+    sendDataToGoogleSheets(videoInfo);
+  });
+
+  function sendDataToGoogleSheets(data) {
+    let formData = new FormData();
+
+    for (let key in data) {
+      formData.append(key, data[key]);
+    }
+
+    fetch('https://script.google.com/macros/s/AKfycbx7ZcmchhZD-9BP9tr9L4HNEkxlzAXs5XLxwXNlWkIogLI3dv3pZcqyhcRgnrWkou2-zQ/exec', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+      console.log('Success:', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }
+
+</script>
+
+</body>
+</html>
