@@ -90,41 +90,61 @@ var coll = document.getElementsByClassName("collapsible");
   });
 
   player.on('pause', function() {
-    var endDate = new Date();
-    var endTime = player.currentTime();
-    var duration = endTime - startTime;
+  var endDate = new Date();
+  var endTime = player.currentTime();
+  var duration = endTime - startTime;
+  var videoPath = "C:/Users/Meta DEV 02/Desktop/video/Articles_ Omission of A and An _ Article in English Grammar.mp4";
+  var videoName = videoPath.split('/').pop().split('.')[0];
 
-    var videoInfo = {
-      "Video Player Name": "Video.js",
-      "Location": "C:/Users/Meta DEV 02/Desktop/video/Articles_ Omission of A and An _ Article in English Grammar.mp4",
-      "Start Time": startTime,
-      "Start Date and Time": startDate.toLocaleString(),
-      "End Time": endTime,
-      "End Date and Time": endDate.toLocaleString(),
-      "Video Playing Duration": duration
-    };
+  var videoInfo = {
+    "video_name": videoName,
+    "location": videoPath,
+    "pl_start": startTime,
+    "start_date_time": startDate.toLocaleString(),
+    "pl_end": endTime,
+    "end_date_time": endDate.toLocaleString(),
+    "duration": duration
+  };
 
-    videoData.push(videoInfo);
-    saveJsonToFile(videoData, 'video_information.json');
-  });
+  videoData.push(videoInfo);
+  saveJsonToFile(videoData, 'video_information.csv');
+});
+
 
   function saveJsonToFile(data, filename) {
-    var jsonString = JSON.stringify(data, null, 2);
-    var file = new Blob([jsonString], {type: 'application/json'});
-    var url = URL.createObjectURL(file);
+  var csvContent = convertToCSV(data);
+  var file = new Blob([csvContent], {type: 'text/csv'});
+  var url = URL.createObjectURL(file);
 
-    var a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
 
-    setTimeout(function() {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 0);
+  setTimeout(function() {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 0);
+}
+
+function convertToCSV(objArray) {
+  var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+  var str = '';
+  var headers = Object.keys(array[0]).map(header => `"${header}"`).join(",") + '\r\n';
+
+  for (var i = 0; i < array.length; i++) {
+    var line = '';
+    for (var index in array[i]) {
+      if (line != '') line += ','
+      line += `"${array[i][index]}"`;
+    }
+    str += line + '\r\n';
   }
+  return headers + str;
+}
+
 
 </script>
 
